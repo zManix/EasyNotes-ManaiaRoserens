@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Easy-Notes | Add</title>
+</head>
+
+<style>
+    * {
+        font-family: sans-serif;
+    }
+
+    form {
+        display: flex;
+        flex-direction: column;
+    }
+
+    label,
+    input,
+    textarea,
+    button {
+        display: block;
+        margin-bottom: 15px;
+    }
+
+    input {
+        height: 25px;
+    }
+
+    button {
+        height: 25px;
+        margin: 15px;
+        width: 200px;
+    }
+
+    button:first-of-type {
+        margin-left: 0;
+    }
+
+    button:last-of-type {
+        margin-right: 0;
+    }
+
+    .buttons {
+        display: flex;
+    }
+</style>
+
+<body>
+    <h1>Easy-Notes</h1>
+
+    <h2>Notiz hinzufügen</h2>
+
+    <form action="/add" method="post">
+
+        <label for="titel">Titel:</label>
+        <input type="text" id="titel" name="title" required>
+
+        <label for="beschreibung">Beschreibung:</label>
+        <textarea id="beschreibung" name="description" rows="10" required></textarea>
+
+        <div class="buttons">
+            <button type="submit" value="add">Hinzufügen</button>
+            <button type="reset" onclick="window.location = '/'">Abbrechen</button>
+        </div>
+    </form>
+
+</body>
+
+</html>

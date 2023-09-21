@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Easy-Notes</title>
+</head>
+
+<style>
+    * {
+        font-family: sans-serif;
+    }
+
+    .notes {
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+    table,
+    th,
+    td {
+        border: 1px solid lightgray;
+    }
+
+    th,
+    td {
+        padding: 8px;
+        text-align: left;
+    }
+
+    th {
+        background-color: #f2f2f2;
+    }
+
+    th:nth-child(1),
+    td:nth-child(1) {
+        width: 200px;
+    }
+
+    th:nth-child(3),
+    td:nth-child(3) {
+        width: 150px;
+    }
+
+    .note__actions {
+        align-items: center;
+        display: flex;
+        justify-content: center;
+    }
+
+    .note__actions .action {
+        margin: 0 5px;
+    }
+
+    .button--new {
+        margin: 15px 0;
+    }
+
+    .message {
+        background-color: greenyellow;
+        padding: 15px;
+        text-align: center;
+        width: 500px;
+
+    }
+</style>
+
+<script>
+
+    async function sendDeleteRequest(button) {
+        const uuid = button.getAttribute('value');
+
+        const response = await fetch('/delete', {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                uuid: uuid,
+            })
+        })
+
+        if (200 === response.status) {
+            window.location = '/?msg=Notiz wurde gelöscht.';
+        }
+    }
+
+</script>
+
+<body>
+    <h1><a href="/"> Easy-Notes</a></h1>
+
+    <h2>Servername: <%= serverName %>
+    </h2>
+
+    <% if(locals.message){ %>
+        <div class="message">
+            <%= locals.message %>
+        </div>
+        <% } %>
+
+            <div class="button--new"><a href="/add">Add Note</a></div>
+
+            <table class="notes">
+                <thead>
+                    <tr>
+                        <th class="note__title">Titel</th>
+                        <th class="note__description">Beschreibung</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+
+                <% if (notes.length> 0){%>
+                    <tbody>
+                        <% for (let note of notes){ %>
+
+                            <tr>
+                                <td class="note__title">
+                                    <%= note.title %>
+                                </td>
+                                <td class="note__description">
+                                    <%= note.description %>
+                                </td>
+                                <td>
+                                    <div class="note__actions">
+                                        <div class="action action--edit">
+                                            <a href="/edit/<%= note.uuid %>">Edit</a>
+                                        </div>
+                                        <div class="action action--edit">
+                                            <button type="button" value="<%= note.uuid %>"
+                                                onclick="sendDeleteRequest(this)">Delete</button>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <% } %>
+                    </tbody>
+
+                    <%}%>
+            </table>
+
+</body>
+
+</html>

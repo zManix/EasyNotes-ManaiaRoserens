@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Easy-Notes | Update</title>
+</head>
+
+<style>
+    * {
+        font-family: sans-serif;
+    }
+
+    form {
+        display: flex;
+        flex-direction: column;
+    }
+
+    label,
+    input,
+    textarea,
+    button {
+        display: block;
+        margin-bottom: 15px;
+    }
+
+    input {
+        height: 25px;
+    }
+
+    button {
+        height: 25px;
+        margin: 15px;
+        width: 200px;
+    }
+
+    button:first-of-type {
+        margin-left: 0;
+    }
+
+    button:last-of-type {
+        margin-right: 0;
+    }
+
+    .buttons {
+        display: flex;
+    }
+</style>
+
+<script>
+
+    async function sendUpdateRequest() {
+
+        const uuid = document.getElementById('id').value;
+        const title = document.getElementById('titel').value;
+        const description = document.getElementById('beschreibung').value;
+
+        const response = await fetch(`/edit/${uuid}`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                title: title,
+                description: description,
+            })
+        })
+
+        if (200 === response.status) {
+            window.location = '/?msg=Notiz wurde geändert.';
+        } else {
+            console.error('Fehler passiert')
+        }
+    }
+
+</script>
+
+<body>
+    <h1>Easy-Notes</h1>
+
+    <h2>Notiz ändern</h2>
+
+    <form>
+
+        <label for="id">ID:</label>
+        <input type="text" id="id" name="id" value="<%= note.uuid %>" disabled>
+
+        <label for="titel">Titel:</label>
+        <input type="text" id="titel" name="titel" value="<%= note.title %>" required>
+
+        <label for="beschreibung">Beschreibung:</label>
+        <textarea id="beschreibung" name="beschreibung" rows="10" required><%= note.description %></textarea>
+
+        <div class="buttons">
+            <button type="button" onclick="sendUpdateRequest()">Speichern</button>
+            <button type="reset" onclick="window.location = '/'">Abbrechen</button>
+        </div>
+    </form>
+
+</body>
+
+</html>
