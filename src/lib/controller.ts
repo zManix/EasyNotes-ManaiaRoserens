@@ -27,7 +27,9 @@ async function getAllNotes() {
  * @version 1.0.0
  */
 async function readNote(uuid: string) {
-  const result = await db.queryDB('SELECT `uuid`, `title`, `description` FROM `notes` where `uuid` = ?', [uuid]);
+  const result = await db.queryDB('SELECT HEX(`uuid`), `title`, `description` FROM `notes` where HEX(`uuid`) = ?', [
+    uuid,
+  ]);
 
   if (result.rows) {
     return result.rows;
@@ -48,7 +50,7 @@ async function readNote(uuid: string) {
  */
 async function createNote(title: string, description: string) {
   const result = await db.queryDB(
-    'INSERT INTO `notes` (`uuid`, `title`, `description`, `created_at`, `updated_at`) VALUES (uuid(), ?, ?, current_timestamp(), current_timestamp());',
+    "INSERT INTO `notes` (`uuid`, `title`, `description`, `created_at`, `updated_at`) VALUES (UNHEX(REPLACE(UUID(), '-', '')), ?, ?, current_timestamp(), current_timestamp());",
     [title, description],
   );
 
@@ -71,7 +73,7 @@ async function createNote(title: string, description: string) {
  * @version 1.0.0
  */
 async function updateNote(uuid: string, title: string, description: string) {
-  const result = await db.queryDB('UPDATE `notes` SET `title` = ?, `description` = ? WHERE `uuid` = ?;', [
+  const result = await db.queryDB('UPDATE `notes` SET `title` = ?, `description` = ? WHERE HEX(`uuid`) = ?;', [
     title,
     description,
     uuid,
@@ -94,7 +96,7 @@ async function updateNote(uuid: string, title: string, description: string) {
  * @version 1.0.0
  */
 async function deleteNote(uuid: string) {
-  const result = await db.queryDB('DELETE FROM `notes` WHERE `notes`.`uuid` = ?', [uuid]);
+  const result = await db.queryDB('DELETE FROM `notes` WHERE `notes`.HEX(`uuid`) = ?', [uuid]);
 
   return result;
 }
