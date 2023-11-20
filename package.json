@@ -1,6 +1,6 @@
 {
   "name": "easy-notes",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Easy-Notes erlaubt es einfache Notizen zu verwalten.",
   "main": "src/index.ts",
   "scripts": {
