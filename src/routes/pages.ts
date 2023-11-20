@@ -2,6 +2,7 @@ import express, { Request, Response } from 'express';
 import { getAllNotes, readNote, createNote, updateNote, deleteNote } from '../lib/controller';
 import { validate } from 'uuid';
 import os from 'os';
+const { version } = require('../../package.json');
 
 const serverName = os.hostname();
 
@@ -10,7 +11,7 @@ const routes = express.Router();
 routes.get('/', async (_req: Request, res: Response) => {
   const message = _req.query.msg;
   const notes = await getAllNotes();
-  res.render('pages/index', { notes: notes, message: message, serverName: serverName });
+  res.render('pages/index', { notes: notes, message: message, serverName: serverName, appVersion: version });
 });
 
 routes.get('/add', (_req: Request, res: Response) => {

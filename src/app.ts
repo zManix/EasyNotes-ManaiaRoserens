@@ -5,12 +5,13 @@ import path from 'path';
 import pageRoutes from './routes/pages';
 
 import { db } from './lib/db';
+import os from 'os';
 
 //For env File
 dotenv.config();
 
 const app: Application = express();
-const port = process.env.APP_PORT || 3000;
+const port = process.env.APP_PORT || 8080;
 
 app.disable('x-powered-by');
 app.use(express.json());
@@ -32,9 +33,11 @@ try {
   db.connectDB(dbConfig.host, dbConfig.port, dbConfig.name, dbConfig.user, dbConfig.password);
 
   app.listen(port, () => {
-    console.log(`Easy Notes runs at http://localhost:${port}`);
+    console.log(`Easy Notes runs at http://${os.hostname()}:${port}`);
   });
 } catch (err) {
+  app.resource.status(500).send();
+
   const errorMessage = (err as Error).message;
 
   console.error(errorMessage);
