@@ -48,7 +48,7 @@ test:
     # Netzwerk erstellen
     - docker network create net-easynotes
     # MariaDB Image pullen und Datenbank Container für den Test starten.
-    - docker pull mariadb:latest
+    - docker pull mysql:latest
     - docker run --name easynotes-db --network net-easynotes -e MYSQL_RANDOM_ROOT_PASSWORD=yes -e MYSQL_DATABASE=$MYSQL_DATABASE -e MYSQL_USER=$MYSQL_USER -e MYSQL_PASSWORD=$MYSQL_PASSWORD -v $(pwd)/dbseed.sql:/docker-entrypoint-initdb.d/seed.sql -d mariadb:latest
     - sleep 30
     # EasyNotes Container starten
