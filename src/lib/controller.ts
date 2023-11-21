@@ -1,4 +1,5 @@
 import { db } from '../lib/db';
+import { parse } from 'uuid';
 
 /**
  * Get all notes from the DB.
@@ -8,7 +9,10 @@ import { db } from '../lib/db';
  * @version 1.0.0
  */
 async function getAllNotes() {
-  const result = await db.queryDB('SELECT uuid, title, description  FROM `notes`', []);
+  const result = await db.queryDB(
+    "SELECT LOWER(CONCAT(SUBSTR(HEX(uuid), 1, 8), '-',SUBSTR(HEX(uuid), 9, 4), '-',SUBSTR(HEX(uuid), 13, 4), '-',SUBSTR(HEX(uuid), 17, 4), '-',SUBSTR(HEX(uuid), 21))) AS uuid, title, description  FROM `notes`",
+    [],
+  );
 
   if (result.rows) {
     return result.rows;
@@ -27,9 +31,11 @@ async function getAllNotes() {
  * @version 1.0.0
  */
 async function readNote(uuid: string) {
-  const result = await db.queryDB('SELECT HEX(`uuid`), `title`, `description` FROM `notes` where HEX(`uuid`) = ?', [
-    uuid,
-  ]);
+  const binaryUuid = Buffer.from(parse(uuid));
+  const result = await db.queryDB(
+    "SELECT LOWER(CONCAT(SUBSTR(HEX(uuid), 1, 8), '-',SUBSTR(HEX(uuid), 9, 4), '-',SUBSTR(HEX(uuid), 13, 4), '-',SUBSTR(HEX(uuid), 17, 4), '-',SUBSTR(HEX(uuid), 21))) AS uuid, `title`, `description` FROM `notes` where `uuid` = ?",
+    [binaryUuid],
+  );
 
   if (result.rows) {
     return result.rows;
@@ -73,10 +79,11 @@ async function createNote(title: string, description: string) {
  * @version 1.0.0
  */
 async function updateNote(uuid: string, title: string, description: string) {
-  const result = await db.queryDB('UPDATE `notes` SET `title` = ?, `description` = ? WHERE HEX(`uuid`) = ?;', [
+  const binaryUuid = Buffer.from(parse(uuid));
+  const result = await db.queryDB('UPDATE `notes` SET `title` = ?, `description` = ? WHERE `uuid` = ?;', [
     title,
     description,
-    uuid,
+    binaryUuid,
   ]);
 
   if (result.rows) {
@@ -96,8 +103,8 @@ async function updateNote(uuid: string, title: string, description: string) {
  * @version 1.0.0
  */
 async function deleteNote(uuid: string) {
-  const result = await db.queryDB('DELETE FROM `notes` WHERE `notes`.HEX(`uuid`) = ?', [uuid]);
-
+  const binaryUuid = Buffer.from(parse(uuid));
+  const result = await db.queryDB('DELETE FROM `notes` WHERE `notes`.`uuid` = ?', [binaryUuid]);
   return result;
 }
 
