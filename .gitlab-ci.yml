@@ -3,7 +3,7 @@ variables:
   IMAGE_FILE: 'easynotes.tar'
   REGISTRY_PATH: '$CI_REGISTRY/m210-easy-notes/easy-notes' # Hier dein individueller Pfad eingeben von deinem Projekt.
   IMAGE_NAME: 'easynotes'
-  IMAGE_VERSION: '1.0.3' # Hier Versionsnummer eingeben. Bitte analog der package.json Dateie damit die Versionsnummer konsistent sind.
+  IMAGE_VERSION: '1.0.4' # Hier Versionsnummer eingeben. Bitte analog der package.json Dateie damit die Versionsnummer konsistent sind.
 
 # Um Docker Befehle verwenden zu können müssen wir die GitLab-Pipeline-Umgebung konfigurieren.
 # Wir verwenden Docker als Pipeline und verwenden zusätzlich docker-in-docker (dind) als Service um Docker-Befehle auführen zu können.

@@ -42,8 +42,10 @@ async function queryDB(sql: string, params: any) {
 
   try {
     const [rows, fields] = await connection.execute(sql, params);
+    connection.end();
     return { rows: rows, fields: fields };
   } catch (err) {
+    connection.end();
     return { err: err };
   }
 }
