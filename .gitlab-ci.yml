@@ -34,6 +34,7 @@ build:
   artifacts:
     paths:
       - $IMAGE_FILE
+    expire_in: 10 mins
 
 # Test Stage
 test:
@@ -49,7 +50,7 @@ test:
     - docker network create net-easynotes
     # MariaDB Image pullen und Datenbank Container für den Test starten.
     - docker pull mysql:latest
-    - docker run --name easynotes-db --network net-easynotes -e MYSQL_RANDOM_ROOT_PASSWORD=yes -e MYSQL_DATABASE=$MYSQL_DATABASE -e MYSQL_USER=$MYSQL_USER -e MYSQL_PASSWORD=$MYSQL_PASSWORD -v $(pwd)/dbseed.sql:/docker-entrypoint-initdb.d/seed.sql -d mariadb:latest
+    - docker run --name easynotes-db --network net-easynotes -e MYSQL_RANDOM_ROOT_PASSWORD=yes -e MYSQL_DATABASE=$MYSQL_DATABASE -e MYSQL_USER=$MYSQL_USER -e MYSQL_PASSWORD=$MYSQL_PASSWORD -v $(pwd)/dbseed.sql:/docker-entrypoint-initdb.d/seed.sql -d mysql:latest
     - sleep 30
     # EasyNotes Container starten
     - docker run --name easynotes --network net-easynotes -e DB_HOST=easynotes-db -e DB_NAME=$MYSQL_DATABASE -e DB_USER=$MYSQL_USER -e DB_PASS=$MYSQL_PASSWORD -p 8080:8080 -d $REGISTRY_PATH/$IMAGE_NAME:latest

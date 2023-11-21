@@ -1,7 +1,7 @@
 USE easynotes;
 
 CREATE TABLE `notes` (
-    `uuid` uuid NOT NULL DEFAULT uuid(),
+    `uuid` binary(16) NOT NULL,
     `title` varchar(50) NOT NULL,
     `description` varchar(2500) NOT NULL,
     `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
@@ -10,4 +10,3 @@ CREATE TABLE `notes` (
 
 ALTER TABLE `notes`
 ADD PRIMARY KEY (`uuid`);
-COMMIT;
