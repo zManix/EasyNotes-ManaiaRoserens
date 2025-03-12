@@ -1,0 +1,59 @@
+# Globale Variablen
+variables:
+  IMAGE_FILE: easynotes-image
+  REGISTRY_PATH: "github.com/zManix/EasyNotes-ManaiaRoserens"
+  IMAGE_NAME: easynotes
+  IMAGE_VERSION: "1.0.4"
+
+# Docker-Image und Service für die Pipeline
+image: docker:20.10.16
+services:
+  - docker:20.10.16-dind
+
+# Stages definieren
+stages:
+  - build
+  - test
+  - deploy
+
+# Build-Stage
+build:
+  stage: build
+  script:
+    - echo "Building Docker image..."
+    - docker build -t $IMAGE_NAME:$IMAGE_VERSION .
+    - docker save $IMAGE_NAME:$IMAGE_VERSION > $IMAGE_FILE
+  artifacts:
+    paths:
+      - $IMAGE_FILE
+    expire_in: 1 week
+
+# Test-Stage
+test:
+  stage: test
+  script:
+    - echo "Testing Docker image..."
+    - docker load < $IMAGE_FILE
+    - docker network create test-network
+    - docker run -d --name mysql-container --network test-network -e MYSQL_ROOT_PASSWORD=Password2023 -e MYSQL_DATABASE=easynotes -e MYSQL_USER=easynotes -e MYSQL_PASSWORD=easynotes mysql:5.7
+    - sleep 30
+    - docker run -d --name easynotes-container --network test-network -p 8080:8080 -e DB_HOST=mysql-container -e DB_PORT=3306 -e DB_NAME=easynotes -e DB_USER=easynotes -e DB_PASS=easynotes $IMAGE_NAME:$IMAGE_VERSION
+    - sleep 5
+    - docker run --network test-network alpine /bin/sh -c "apk add --no-cache curl && curl -v easynotes-container:8080"
+    - docker stop easynotes-container mysql-container
+    - docker rm easynotes-container mysql-container
+    - docker network rm test-network
+
+# Deploy-Stage
+deploy:
+  stage: deploy
+  script:
+    - echo "Deploying Docker image..."
+    - docker load < $IMAGE_FILE
+    - docker tag $IMAGE_NAME:$IMAGE_VERSION $REGISTRY_PATH/$IMAGE_NAME:$IMAGE_VERSION
+    - docker tag $IMAGE_NAME:$IMAGE_VERSION $REGISTRY_PATH/$IMAGE_NAME:latest
+    - echo "Would push to container registry here if credentials were set up"
+    # In einer realen Umgebung würde hier der Push zur Container Registry erfolgen
+    # docker login $CI_REGISTRY -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD
+    # docker push $REGISTRY_PATH/$IMAGE_NAME:$IMAGE_VERSION
+    # docker push $REGISTRY_PATH/$IMAGE_NAME:latest
